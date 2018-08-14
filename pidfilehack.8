@@ -1,0 +1,60 @@
+.TH pidfilehack 8
+.SH NAME
+pidfilehack \- work around daemons that always fork
+.SH SYNOPSIS
+.B pidfilehack
+.I servicename
+.I pidfile
+.I command
+.I [parameters]
+
+.SH DESCRIPTION
+.B pidfilehack
+is used to work around daemons that insist on forking into the background,
+but that do write a correct pid file.
+
+pidfilehack forks the actual service, then waits for the pidfile to
+be written. Once it can read the pid from the pidfile it will tell
+minit the real pid and quit.
+
+.SH USAGE
+usually pidfilehack is symlinked as \fIrun\fR command of a service.
+.TP
+servicename
+the name of the service pidfilehack is installed for.
+.TP
+pidfile
+the filename to read the pid from
+.TP
+command
+the real command to start
+.TP
+parameters
+additional parameters for the command
+
+A typical use of this command will look like this:
+.TP
+/etc/minit/apache
+.TP
+/etc/minit/apache/params
+apache
+.br
+/var/run/apache.pid
+.br
+apachectl
+.br
+start
+.TP
+/etc/minit/apache/run
+-> /sbin/pidfilehack
+
+.SH AUTHOR
+minit was written by Felix von Leitner and can be downloaded from
+his page at
+.I http://www.fefe.de/minit/
+
+This manpage was written by Erich Schubert <erich@debian.org>
+for the Debian GNU/Linux operating system.
+
+.SH "SEE ALSO"
+msvc(8), pidfilehack(8)

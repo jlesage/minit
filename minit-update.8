@@ -1,0 +1,36 @@
+.TH minit-update 8
+.SH NAME
+minit\-update \- replace running minit with a new version
+.SH SYNOPSIS
+.B minit\-update [ \-v [ \-u ] ]
+
+.SH DESCRIPTION
+.B minit\-update
+is used to replace a running minit with a new version.
+
+It tries to retrieve the state information about running services from
+minit, then have minit replace itself with the new version and
+restore the stored state information.
+
+.SH USAGE
+Unless the \-u option is given, minit\-update assumes you are running
+in test mode.
+.TP 4
+\-v
+verbose operation
+.TP
+\-u
+update mode
+
+.SH AUTHOR
+minit was written by Felix von Leitner and can be downloaded from
+his page at
+.I http://www.fefe.de/minit/
+
+minit\-update was contributed by Florian Westphal.
+
+This manpage was written by Erich Schubert <erich@debian.org>
+for the Debian GNU/Linux operating system.
+
+.SH "SEE ALSO"
+msvc(8), pidfilehack(8)

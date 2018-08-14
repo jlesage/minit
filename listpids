@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# trivial shell script to list the running services
+
+for i in `find /etc/minit -type d | grep -v /etc/minit$ | sed 's@/etc/minit/@@'`; do
+  msvc $i >/dev/null 2>&1
+  if test $? = 0; then
+    echo $i
+  fi
+done

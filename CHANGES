@@ -1,0 +1,96 @@
+0.10:
+  add sample script for /etc/minit/ctrlaltdel/run as
+    control/ctrlaltdel-run (Florian Westphal)
+  add killall5, needs /proc on Linux though (Florian Westphal)
+  add shutdown (Bernd Wachter)
+  add -Wall and -W and kill resulting compiler warnings
+  several fixes (Bernd Wachter)
+  add update support - tell minit to execve something else, a newer
+    version of itself, preferably (Florian Westphal)
+  also add minit-update program to download state from old minit and
+    upload state to new minit after update (Florian Westphal)
+  #include minit.h and use MINITROOT consistently (Lordy)
+  Don't assume MINITROOT is 10 bytes long (Erich Schubert)
+  add man pages!! (Erich Schubert)
+  add a way to ask minit for dependencies
+  msvc -H will now dump the ten least recently spawned processes.
+    This is useful to see which process is looping.
+  fix bug in msvc killing process group if readpid failed
+    (Erich Schubert)
+  You can now blacklist services temporarily by passing -servicename on
+    the kernel command line.  The first time they are to be started will
+    then be skipped.  Use this, for example, to not start the dhcp
+    client when your notebook is not plugged in a network.
+  add serdo (execute batch, no shell features whatsoever)
+  make "msvc servicename" output easier to parse if not outputting to a tty
+  require libowfat instead of shipping half of it ourselves
+  replace malloc with alloca; minit is now 6644 bytes on i386.
+  add usage for serdo (Nikola Vladov)
+  fix msvc -d followed by msvc -h (would send SIGHUP to pid 1, i.e. kill
+    minit; found by Paul Fox)
+  added small special-purpose malloc using a static buffer before
+    calling the real malloc (Nikola Vladov)
+
+0.9.1:
+  fix embarassing typo in msvc (Gelu G. Lupas)
+
+0.9:
+  For stopped services, minit did not record the time when it finished,
+    but when it was started.
+  add hard-reboot from Tommi Virtanen.  He also asked me to include an
+    explicit license statement and sent a patch to make debian packaging
+    easier (deb files can't include FIFOs).
+  Olaf: add write_proc.
+  Olaf: lines in depends can now be commented out with a #
+  Olaf: add a method to clear dead services (mark as terminated)
+  minit now checks whether a PID actually exists before accepting msvc -P
+    this removes a race condition when the forked service terminates
+    before pidfilehack notifies minit of the PID
+  msvc now accepts more than one service after -o, -d, ...
+  msvc now accepts /etc/minit/sshd instead of sshd as service name
+  better error handling in msvc (more and better error messages)
+  minit now has a heuristic to detect time zone changes and still
+    have msvc report the correct elapsed time since process start/end
+    (don't look at the source code, it's ultra-kludgey)
+  add msvc -g (get PID for shell scripts)
+
+0.8:
+  call waitpid repeatedly until it returns "no children".
+  This reaps zombies faster.
+
+0.7:
+  found and fixed the bug that made the logging support not work when
+    minit was running as PID 1.
+  saw that the shutdown from sysvinit actually does what it's supposed
+    to do, even with minit, if one uses the -n mode.  It should be quite
+    easy to write a nice and clean shutdown for minit now.
+  if a service depends on a service that already finished, don't start
+    it again.
+
+0.6.1:
+  fixed msvc and minit handling of msvc -P.
+  pidfilehack has now actually been tested and works with ssh.
+
+0.6:
+  add tty and session leadership magic and I actually got getty to work
+    as init on my laptop, i.e. in production use!
+  add msvc man page.
+
+0.5.1:
+  cut&paste error, set wrong variable to 0 for keyboard request.
+    Thanks, Schulti.
+
+0.5:
+  add "log" subdirectory (see README).
+  get rid of stdio and *printf and switch to routines from libowfat.
+
+0.4:
+  add pidfilehack.  It will take the first argument as filename for the
+  PID file (i.e. /var/run/sshd.pid), the second argument as service name
+  for minit (i.e. ssh) and the rest of the command line is run without
+  path searching in a child process.  The parent process will then
+  try to open the pidfile several times (for up to 30 seconds), read the
+  PID off it and run msvc to tell minit the PID of the service.  minit
+  can then track sshd and restart it if necessary.  This gross hack does
+  not work for daemons that do not write a PID file, but there are not
+  many of those, fortunately.

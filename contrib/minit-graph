@@ -1,0 +1,49 @@
+#!/usr/bin/python
+
+# Contributed by Tommi Virtanen <tv@debian.org>
+# Try:
+# minit-graph /etc/minit >foo.dot
+# dot -Tps -o foo.ps foo.dot
+# gv foo.ps
+
+# dot is part of graphviz (http://www.graphviz.org/) --fefe
+
+import os, errno, string
+
+def safe(s):
+    r=""
+    for c in s:
+        if c not in "abcdefghijklmnopqrstuvwxyz0123456789_":
+            c="_"
+        r+=c
+    return r
+
+import sys
+try:
+    dir = sys.argv[1]
+except IndexError:
+    dir = '.'
+
+print "digraph minit {"
+
+for svc in os.listdir(dir):
+    if svc=="in" or svc=="out":
+        continue
+    if os.path.exists(os.path.join(dir, svc, "sync")):
+        print "%s [shape=box];"%safe(svc)
+    else:
+        print "%s;"%safe(svc)
+    try:
+        file = open(os.path.join(dir, svc, "depends"))
+    except IOError, e:
+        if e.errno == errno.ENOENT:
+            pass
+        else:
+            raise
+    else:
+        for dep in file.xreadlines():
+            print "%s -> %s;" % (safe(svc), safe(dep.strip()))
+        file.close()
+
+print "};"
+

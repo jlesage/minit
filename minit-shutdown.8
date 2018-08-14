@@ -1,0 +1,45 @@
+.TH minit-shutdown 8
+.SH NAME
+minit-shutdown \- shutdown the minit init system.
+.SH SYNOPSIS
+.B minit-shutdown -[\fIrhosmn\fR] [-t \fIsecs\fR]
+
+.SH DESCRIPTION
+.B minit-shutdown
+tries to properly shutdown your system with minit.
+
+.SH USAGE
+.TP 9
+-r
+reboot after shutdown
+.TP
+-h
+halt after shutdown
+.TP
+-o
+power-off after shutdown
+.TP
+-s
+single-user console after shutdown
+.TP
+-m
+only shutdown minit-part
+.TP
+-n
+do not shutdown services using minit
+.TP
+-t \fIsecs\fR
+delay between SIGTERM and SIGKILL
+
+.SH AUTHOR
+minit was written by Felix von Leitner and can be downloaded from
+his page at
+.I http://www.fefe.de/minit/
+
+This shutdown was contributed by Bernd Wachter.
+
+This manpage was written by Erich Schubert <erich@debian.org>
+for the Debian GNU/Linux operating system.
+
+.SH "SEE ALSO"
+msvc(8), pidfilehack(8)

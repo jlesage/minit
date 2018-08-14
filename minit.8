@@ -1,0 +1,41 @@
+.TH minit 8
+.SH NAME
+minit \- a UNIX process no 1
+.SH SYNOPSIS
+.B minit
+
+.SH DESCRIPTION
+.B minit
+is a possible first process the kernel starts
+
+to use minit as system init, first read available documentation in 
+.I /usr/share/doc/minit
+and then add the parameter 
+\fIinit=/sbin/minit\fR
+to your kernel command line.
+
+.I lilo
+users need to add it to the \fIappend="something"\fR
+option in \fI/etc/lilo.conf\fR,
+
+.I grub
+users can just append it to their "\fIkernel\fR image options" lines.
+
+.SH USAGE
+minit will by default do nothing except starting the minit service defined
+in
+.I /etc/minit/default
+which usually contains a file named
+.I depends
+specifying which services are to be started at bootup.
+
+.SH AUTHOR
+minit was written by Felix von Leitner and can be downloaded from
+his page at
+.I http://www.fefe.de/minit/
+
+This manpage was written by Erich Schubert <erich@debian.org>
+for the Debian GNU/Linux operating system.
+
+.SH "SEE ALSO"
+msvc(8), pidfilehack(8)

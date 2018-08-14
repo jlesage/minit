@@ -1,0 +1,28 @@
+.TH serdo 1
+.SH NAME
+serdo \- run commands serially
+.SH SYNOPSIS
+.B serdo
+.I [-c]
+.I filename
+
+.SH DESCRIPTION
+.B serdo
+will open the file given by the command line argument and serially
+execute all the commands in it.  If a command fails, the whole batch job
+is aborted (unless -c is given as first paramter on the serdo command
+line).
+
+serdo understands the \fBcd\fR and \fBexport\fR sh(1) built-ins (no
+loops, no ~user expansion, no $FOO expansion, no backticks).
+
+serdo is very limited by design, but it is nice to have if you just want
+to run a few ifconfig, ip, route commands in sequence.  serdo will
+return the exit code of the last command it ran, 0 if none were given.
+
+.SH AUTHOR
+minit was written by Felix von Leitner and can be downloaded from
+.I http://www.fefe.de/minit/
+
+.SH "SEE ALSO"
+msvc(8), sh(1)

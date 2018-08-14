@@ -1,0 +1,6 @@
+The "sync" support should be done asynchronously, not with waitpid.
+
+if hwclock is used to adjust the system clock by a few hours, the minit
+  times will be completely off.  Maybe we should use the poll timeout to
+  keep track of what we think how long we are running and use that as a
+  basis to find out and correct this?

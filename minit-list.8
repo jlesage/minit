@@ -1,0 +1,30 @@
+.TH minit-list 8
+.SH NAME
+minit-list \- list running services
+.SH SYNOPSIS
+.B minit-list
+
+.SH DESCRIPTION
+.B minit-list
+will scan /etc/minit for services and use msvc to check if the service is
+currently running. It will then print a list of running services.
+
+minit-list was renamed from
+.I listpids
+for the debian package.
+
+.SH USAGE
+minit-list doesn't have any options.
+
+The output is a list of running services.
+
+.SH AUTHOR
+minit was written by Felix von Leitner and can be downloaded from
+his page at
+.I http://www.fefe.de/minit/
+
+This manpage was written by Erich Schubert <erich@debian.org>
+for the Debian GNU/Linux operating system.
+
+.SH "SEE ALSO"
+msvc(8), pidfilehack(8)

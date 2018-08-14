@@ -1,0 +1,47 @@
+.TH hard-reboot 8
+.SH NAME
+hard-reboot \- reboot your system immedeately
+.SH SYNOPSIS
+.B hard-reboot
+.I RESTART
+.br
+.B hard-reboot
+.I HALT
+.br
+.B hard-reboot
+.I POWER_OFF
+
+.SH DESCRIPTION
+.B hard-reboot
+is used to reboot your system.
+
+It will not shut down services, unmount filesystems or notify
+your users, but expects that this has already been done when it
+is called.
+
+.SH USAGE
+
+To prevent accidential use of this application the parameters have to
+be written in uppercase letters.
+.TP 10
+.I RESTART
+restart (reboot) the system
+.TP
+.I HALT
+halt the kernel
+.TP
+.I POWER_OFF
+power off the system if possible (supported by hardware)
+
+.SH AUTHOR
+minit was written by Felix von Leitner and can be downloaded from
+his page at
+.I http://www.fefe.de/minit/
+
+hard-reboot was contributed by Tommi Virtanen.
+
+This manpage was written by Erich Schubert <erich@debian.org>
+for the Debian GNU/Linux operating system.
+
+.SH "SEE ALSO"
+minit(8), msvc(8), pidfilehack(8)

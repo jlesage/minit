@@ -1,0 +1,96 @@
+.TH msvc 8
+.SH NAME
+msvc \- control minit
+.SH SYNOPSIS
+.B msvc
+[
+.B \-[uodpchaitko]
+] [
+.B \-P
+.I pid
+]
+.I service
+[\fI...\fR]
+.SH DESCRIPTION
+.B msvc
+is the management interface to minit.
+.I service
+is the service directory name relative to /etc/minit.  Starting with
+minit 0.9 you can also include /etc/minit/ in the service name.
+.SH OPTIONS
+If no option is given,
+.B msvc
+will just print a small diagnostic message to stdout, saying if the
+service is up, down or finished, which PID it has if it is up, and for
+how long it has been in this state.
+.TP 5
+.B \-u
+Up.
+If the service is not running, start it.
+If the service stops, restart it.
+.TP
+.B \-o
+Once.
+If the service is not running, start it.
+If the service stops, do not restart it.
+.TP
+.B \-d
+Down.
+If the service is running, send it a TERM signal and then a CONT signal.
+After it stops, do not restart it.
+.TP
+.B \-p
+Pause.
+Send the service a STOP signal.
+.TP
+.B \-c
+Continue.
+Send the service a CONT signal.
+.TP
+.B \-h
+Hangup.
+Send the service a HUP signal.
+.TP
+.B \-a
+Alarm.
+Send the service an ALRM signal.
+.TP
+.B \-i
+Interrupt.
+Send the service an INT signal.
+.TP
+.B \-t
+Terminate.
+Send the service a TERM signal.
+.TP
+.B \-k
+Terminate.
+Send the service a KILL signal.
+.TP
+.B \-P \fIpid\fR
+Set PID.
+Tell minit the PID of the service is really \fIpid\fR.  This is useful
+for services that fork themselves in the background but put their real
+PID in a file, typically called /var/run/\fIservice\fR.pid.  Used by
+\fBpidfilehack\fR.
+.TP
+.B \-D \fIservice\fR
+Print dependencies.
+This will print all the names of all the services that were started
+because this services depended on them.  Please note that this is not
+done recursively (i.e. if default depends on qmail and qmail depends on
+log, this will print qmail, not qmail/log.  But msvc -D qmail will print
+qmail/log).
+.TP
+.B \-H
+Print history.
+This will print the names of the ten least recently spawned processes.
+This is useful if you see a process looping (initialization fails and
+minit is restarting it all the time).
+.SH "RETURN CODES"
+Generally, msvc return zero if everything is OK or 1 on error (could not
+open /etc/minit/in or /etc/minit/out or there is no process with the
+given name).  In diagnostic mode, it will exit 0 if the service is up, 2
+if it is down or 3 if it is finished.
+.SH "SEE ALSO"
+pidfilehack(8), svc(8)

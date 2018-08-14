@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# if umount -a fails give services additional time to shut down
+fail(){
+echo umount failed, try again.
+sleep 1
+sync
+umount -a || sleep 3
+}
+
+# Shut down "respawn" services - except getty/1.
+for i in `find /etc/minit -type f -name respawn | sed 's@/respawn$@@' | grep -v ^/etc/minit/getty/1$`;do
+ msvc -d "$i"
+done
+
+#send sigterm to all processes.
+/sbin/killall5 -15
+
+#send sighup to all processes.
+/sbin/killall5 -1
+
+sync
+# umount everything, mount "/" readonly
+/bin/umount -a || fail
+/sbin/swapoff -a
+
+# power down.
+# params should contain one of "RESTART", "HALT" or "POWER_OFF" 
+exec /sbin/hard-reboot $1
+
