@@ -67,7 +67,7 @@ extern int printf(const char *format,...);
 
 extern void opendevconsole();
 
-#define UPDATE
+//#define UPDATE
 #ifdef UPDATE
 static int doupdate;
 #endif
