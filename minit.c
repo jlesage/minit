@@ -65,7 +65,9 @@ char** Argv;
 #undef printf
 extern int printf(const char *format,...);
 
+#ifdef CONSOLE
 extern void opendevconsole();
+#endif
 
 //#define UPDATE
 #ifdef UPDATE
@@ -226,7 +228,9 @@ again:
     if (i_am_init) {
       ioctl(0, TIOCNOTTY, 0);
       setsid();
+#ifdef CONSOLE
       opendevconsole();
+#endif
 /*      ioctl(0, TIOCSCTTY, 1); */
       tcsetpgrp(0, getpgrp());
     }
@@ -398,11 +402,15 @@ if (doupdate) return;
   } while (killed && killed!=(pid_t)-1);
 }
 
+#ifdef CONSOLE
 static volatile int dowinch=0;
+#endif
 static volatile int doint=0;
 
 void sigchild(int sig) { (void)sig; }
+#ifdef CONSOLE
 void sigwinch(int sig) { (void)sig; dowinch=1; }
+#endif
 void sigint(int sig) { (void)sig; doint=1; }
 
 int main(int argc, char *argv[]) {
@@ -424,14 +432,18 @@ int main(int argc, char *argv[]) {
   outfd=open(MINITROOT "/out",O_RDWR|O_NONBLOCK);
 
   if (getpid()==1) {
+#ifdef CONSOLE
     int fd;
+#endif
     i_am_init=1;
     reboot(0);
+#ifdef CONSOLE
     if ((fd=open("/dev/console",O_RDWR|O_NOCTTY))) {
       ioctl(fd, KDSIGACCEPT, SIGWINCH);
       close(fd);
     } else
       ioctl(0, KDSIGACCEPT, SIGWINCH);
+#endif
   }
 /*  signal(SIGPWR,sighandler); don't know what to do about it */
 /*  signal(SIGHUP,sighandler); ??? */
@@ -442,7 +454,9 @@ int main(int argc, char *argv[]) {
     sa.sa_flags=SA_RESTART | SA_NOCLDSTOP;
     sa.sa_handler=sigchild; sigaction(SIGCHLD,&sa,0);
     sa.sa_handler=sigint; sigaction(SIGINT,&sa,0);	/* ctrl-alt-del */
+#ifdef CONSOLE
     sa.sa_handler=sigwinch; sigaction(SIGWINCH,&sa,0);	/* keyboard request */
+#endif
   }
 
   if (infd<0 || outfd<0) {
@@ -486,10 +500,12 @@ int main(int argc, char *argv[]) {
       doint=0;
       startservice(loadservice("ctrlaltdel"),0,-1);
     }
+#ifdef CONSOLE
     if (dowinch) {
       dowinch=0;
       startservice(loadservice("kbreq"),0,-1);
     }
+#endif
     childhandler();
     now=time(0);
     if (now<last || now-last>30) {
@@ -507,7 +523,9 @@ int main(int argc, char *argv[]) {
 	childhandler();
 	break;
       }
+#ifdef CONSOLE
       opendevconsole();
+#endif
       _puts("poll failed!\n");
       sulogin();
       /* what should we do if poll fails?! */
