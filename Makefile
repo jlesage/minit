@@ -25,6 +25,10 @@ ifneq ($(MINITROOT),)
 CFLAGS+=-DMINITROOT='"$(MINITROOT)"'
 endif
 
+ifneq ($(HISTORY),)
+CFLAGS+=-DHISTORY=$(HISTORY)
+endif
+
 ifneq ($(DEBUG),)
 CFLAGS+=-g
 LDFLAGS+=-g

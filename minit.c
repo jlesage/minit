@@ -83,7 +83,9 @@ extern char **split(char *buf,int c,int *len,int plus,int ofs);
 
 extern char **environ;
 
+#ifndef HISTORY
 #define HISTORY 10
+#endif
 #ifdef HISTORY
 int history[HISTORY];
 #endif
