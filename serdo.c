@@ -7,6 +7,8 @@
 #include <str.h>
 #include <byte.h>
 
+extern char **environ;
+
 #define MAXENV 256
 char* envp[MAXENV+2];
 int envc;
