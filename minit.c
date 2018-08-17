@@ -69,6 +69,8 @@ extern int printf(const char *format,...);
 extern void opendevconsole();
 #endif
 
+static void minitexit(int status);
+
 //#define UPDATE
 #ifdef UPDATE
 static int doupdate;
@@ -184,7 +186,7 @@ void handlekilled(pid_t killed) {
   if (killed == (pid_t)-1) {
     static int saidso;
     if (!saidso) { write(2,"all services exited.\n",21); saidso=1; }
-    if (i_am_init) exit(0);
+    if (i_am_init) minitexit(0);
   }
   if (killed==0) return;
   i=findbypid(killed);
@@ -365,10 +367,12 @@ int startservice(int service,int pause,int father) {
   return pid;
 }
 
-void sulogin() {	/* exiting on an initialization failure is not a good idea for init */
-  char *argv[]={"sulogin",0};
-  execve("/sbin/sulogin",argv,environ);
-  _exit(1);
+static void minitexit(int status) {	/* exiting on an initialization failure is not a good idea for init */
+  char tmp[FMT_LONG];
+  char *argv[]={"exit",tmp,0};
+  tmp[fmt_int(tmp,status)]=0;
+  execve(MINITROOT "/exit",argv,environ);
+  _exit(status);
 }
 
 
@@ -461,7 +465,7 @@ int main(int argc, char *argv[]) {
 
   if (infd<0 || outfd<0) {
     _puts("minit: could not open " MINITROOT "/in or " MINITROOT "/out\n");
-    sulogin();
+    minitexit(1);
     nfds=0;
   } else
     pfd.fd=infd;
@@ -527,7 +531,7 @@ int main(int argc, char *argv[]) {
       opendevconsole();
 #endif
       _puts("poll failed!\n");
-      sulogin();
+      minitexit(1);
       /* what should we do if poll fails?! */
       break;
     case 1:
