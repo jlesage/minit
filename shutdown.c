@@ -261,11 +261,17 @@ int main(int argc, char *const argv[]) {
   /* sync buffers */
   sync();
 
+#ifdef DISABLE_SWAP
   exec_cmd("/sbin/swapoff", "swapoff", "-a", (char *) 0);
+#endif
+#ifdef REMOUNT_FILESYSTEM
   exec_cmd("/bin/umount", "umount", "-a", (char *) 0);
   exec_cmd("/bin/mount", "mount", "-o", "remount,ro", "/", (char *) 0);
+#endif
 
+#if defined DISABLE_SWAP || defined REMOUNT_FILESYSTEM
   sync();
+#endif
 
   /* and finally reboot, halt or power-off the system */ 
   if (cfg_downlevel == 0) {
