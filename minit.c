@@ -502,7 +502,7 @@ int main(int argc, char *argv[]) {
     time_t now;
     if (doint) {
       doint=0;
-      startservice(loadservice("ctrlaltdel"),0,-1);
+      startservice(loadservice("sigint"),0,-1);
     }
 #ifdef CONSOLE
     if (dowinch) {
