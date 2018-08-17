@@ -46,7 +46,7 @@ minit-update: minit-update.o split.o openreadclose.o
 serdo: serdo.o
 
 shutdown: shutdown.o split.o openreadclose.o opendevconsole.o
-	$(DIET) $(CROSS)$(CC) $(LDFLAGS) -o shutdown $^
+	$(DIET) $(CROSS)$(CC) $(LDFLAGS) -o shutdown $^ $(LDLIBS)
 
 %.o: %.c
 	$(DIET) $(CROSS)$(CC) $(CFLAGS) -c $<
@@ -62,16 +62,16 @@ test: test.c
 	gcc -nostdlib -o $@ $^ -I../dietlibc/include ../dietlibc/start.o ../dietlibc/dietlibc.a
 
 pidfilehack: pidfilehack.c
-	$(DIET) $(CROSS)$(CC) $(CFLAGS) -o $@ $^
+	$(DIET) $(CROSS)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 hard-reboot: hard-reboot.c
-	$(DIET) $(CROSS)$(CC) $(CFLAGS) -o $@ $^
+	$(DIET) $(CROSS)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 write_proc: write_proc.c
-	$(DIET) $(CROSS)$(CC) $(CFLAGS) -o $@ $^
+	$(DIET) $(CROSS)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 killall5: killall5.c
-	$(DIET) $(CROSS)$(CC) $(CFLAGS) -o $@ $^
+	$(DIET) $(CROSS)$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 install-files:
 	install -d $(DESTDIR)/etc/minit $(DESTDIR)/sbin $(DESTDIR)/bin $(DESTDIR)$(MANDIR)/man8
