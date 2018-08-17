@@ -45,7 +45,9 @@ static inline int __write2(const char*s) { return write(2,s,str_len(s)); }
 #include "minit.h"
 #endif
 
+#ifdef CONSOLE
 extern void opendevconsole();
+#endif
 
 extern char **environ;
 extern int openreadclose(char *fn, char **buf, unsigned long *len);
@@ -207,7 +209,9 @@ int main(int argc, char *const argv[]) {
     }
   }
   
+#ifdef CONSOLE
   opendevconsole();
+#endif
   
   switch (cfg_downlevel) {
 	  case 0:
