@@ -21,6 +21,10 @@ else
 DIET:=$(strip $(diet_path))
 endif
 
+ifneq ($(MINITROOT),)
+CFLAGS+=-DMINITROOT='"$(MINITROOT)"'
+endif
+
 ifneq ($(DEBUG),)
 CFLAGS+=-g
 LDFLAGS+=-g

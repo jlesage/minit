@@ -1,4 +1,6 @@
+#ifndef MINITROOT
 #define MINITROOT "/etc/minit"
+#endif
 
 #ifndef NOVARS
 static struct process {
