@@ -160,10 +160,11 @@ void printUsage() {
 
 int main(int argc, char *const argv[]) {
   int c;
-  int cfg_downlevel=2;
+  int cfg_downlevel=3;
   /* 0: reboot
    * 1: halt
    * 2: power off
+   * 3: shutdown only
    */
   unsigned int cfg_delay = 3;
   int cfg_minitonly = 0;
@@ -223,6 +224,9 @@ int main(int argc, char *const argv[]) {
 	  case 2:
 		  wall("system is going down for power-off NOW\n");
 		  break;
+	  case 3:
+		  wall("system is going down NOW\n");
+		  break;
   }
 
   /* 
@@ -278,7 +282,7 @@ int main(int argc, char *const argv[]) {
     reboot(RB_AUTOBOOT);
   } else if (cfg_downlevel == 1) {
     reboot(RB_HALT_SYSTEM);
-  } else {
+  } else if (cfg_downlevel == 2) {
     reboot(RB_POWER_OFF);
   }
   return 0;
