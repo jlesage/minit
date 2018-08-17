@@ -410,12 +410,14 @@ if (doupdate) return;
 static volatile int dowinch=0;
 #endif
 static volatile int doint=0;
+static volatile int doterm=0;
 
 void sigchild(int sig) { (void)sig; }
 #ifdef CONSOLE
 void sigwinch(int sig) { (void)sig; dowinch=1; }
 #endif
 void sigint(int sig) { (void)sig; doint=1; }
+void sigterm(int sig) { (void)sig; doterm=1; }
 
 int main(int argc, char *argv[]) {
   /* Schritt 1: argv[1] als Service nehmen und starten */
@@ -503,6 +505,10 @@ int main(int argc, char *argv[]) {
     if (doint) {
       doint=0;
       startservice(loadservice("sigint"),0,-1);
+    }
+    if (doterm) {
+      doterm=0;
+      startservice(loadservice("sigterm"),0,-1);
     }
 #ifdef CONSOLE
     if (dowinch) {
