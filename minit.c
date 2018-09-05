@@ -329,6 +329,11 @@ again:
       p2=waitpid(p,0,0);
       return 1;
     }
+    {
+      char tmp[FMT_LONG];
+      tmp[fmt_long(tmp,p)]=0;
+      exec_cmd("./check","check",tmp,(char *) 0);
+    }
     return p;
   }
 }
