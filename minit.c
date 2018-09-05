@@ -636,6 +636,9 @@ error:
 	    root[idx].respawn=1;
 	    goto ok;
 	  case 'C':
+            if (root[idx].pid < 1) {
+	      goto error;
+            }
 	    if (kill(root[idx].pid,0)) {	/* check if still active */
 	      handlekilled(root[idx].pid,-1);	/* no!?! remove form active list */
 	      goto error;
