@@ -90,6 +90,33 @@ extern char **environ;
 int history[HISTORY];
 #endif
 
+/* execute a command and wait for its completion
+ * return the command's exit code or -1 on error */
+int exec_cmd(char *cmd, ...) {
+  char *argv[10];
+  va_list arguments;
+  pid_t pid;
+  int i;
+
+  va_start(arguments, cmd);
+  for (i=0;i<9 && (argv[i] = va_arg(arguments,char *)) != NULL; i++);
+  argv[i] = NULL;
+  va_end(arguments);
+  pid = fork();
+  if (pid < 0) return -1;
+  if (pid > 0) {
+    int status;
+    if (waitpid(pid,&status,0) == 0) {
+      if (!WIFEXITED(status)) return -1;
+      return WEXITSTATUS(status);
+    }
+  } else {
+    execve(cmd,argv,environ);
+    exit(1);
+  }
+  return -1;
+}
+
 /* return index of service in process data structure or -1 if not found */
 int findservice(char *service) {
   int i;
@@ -176,7 +203,7 @@ int isup(int service) {
 int startservice(int service,int pause,int father);
 
 #undef debug
-void handlekilled(pid_t killed) {
+void handlekilled(pid_t killed, int status) {
   int i;
 #ifdef debug
   {
@@ -196,6 +223,20 @@ void handlekilled(pid_t killed) {
   printf("%d exited, idx %d -> service %s\n",killed,i,i>=0?root[i].name:"[unknown]");
 #endif
   if (i>=0) {
+    char *argv0=(char*)alloca(PATH_MAX+1);
+    if (argv0) {
+      char tmp[FMT_LONG]="126";
+      int n;
+      if (status >= 0 && WIFEXITED(status)) {
+        tmp[fmt_long(tmp,WEXITSTATUS(status))]=0;
+      }
+      n=fmt_str(argv0,MINITROOT "/");
+      n+=fmt_str(argv0+n,root[i].name);
+      n+=fmt_str(argv0+n,"/finish");
+      argv0[n]=0;
+      exec_cmd(argv0,"finish",tmp,(char *) 0);
+    }
+
     root[i].pid=0;
     if (root[i].respawn) {
 #if 0
@@ -404,7 +445,7 @@ if (doupdate) return;
 
   do {
     killed=waitpid(-1,&status,WNOHANG);
-    handlekilled(killed);
+    handlekilled(killed,status);
   } while (killed && killed!=(pid_t)-1);
 }
 
@@ -591,7 +632,7 @@ error:
 	    goto ok;
 	  case 'C':
 	    if (kill(root[idx].pid,0)) {	/* check if still active */
-	      handlekilled(root[idx].pid);	/* no!?! remove form active list */
+	      handlekilled(root[idx].pid,-1);	/* no!?! remove form active list */
 	      goto error;
 	    }
 	    goto ok;
