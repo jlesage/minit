@@ -49,7 +49,7 @@ LDFLAGS+=$(foreach fnord,$(libowfat_path),-L$(dir $(fnord)))
 endif
 
 minit: minit.o split.o openreadclose.o opendevconsole.o execcmd.o
-msvc: msvc.o
+msvc: msvc.o execcmd.o
 minit-update: minit-update.o split.o openreadclose.o
 serdo: serdo.o
 

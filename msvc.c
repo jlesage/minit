@@ -17,6 +17,8 @@ static int infd,outfd;
 
 static char buf[1500];
 
+extern int exec_cmd(char *cmd, ...);
+
 void addservice(char* service) {
   char* x;
   if (str_start(service,MINITROOT "/"))
@@ -271,7 +273,20 @@ int main(int argc,char *argv[]) {
 	    } else if (pid==1)
 	      continue;
 	    else
-	      respawn(argv[i],0) || kill(pid,SIGTERM) || kill(pid,SIGCONT);
+              if (respawn(argv[i],0)) {
+                carp("Could not disable respawn of service ", argv[i]);
+                ret=1;
+              } else {
+                /* run the service's (optional) kill program */
+                if (!chdir(MINITROOT) && !chdir(argv[i])) {
+                  char tmp[FMT_LONG];
+                  tmp[fmt_long(tmp, pid)]=0;
+                  exec_cmd("./kill","kill",tmp,(char *) 0);
+                }
+
+                /* send signals */
+	        kill(pid,SIGTERM) || kill(pid,SIGCONT);
+              }
 	  }
 	  break;
 	case 'u':
