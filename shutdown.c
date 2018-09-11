@@ -52,32 +52,11 @@ extern void opendevconsole();
 extern char **environ;
 extern int openreadclose(char *fn, char **buf, unsigned long *len);
 extern char **split(char *buf,int c,int *len,int plus,int ofs);
+extern int exec_cmd(char *cmd, ...);
 extern char *optarg;
 
 void wall(char *buf) {
   __write2(buf);
-}
-
-int exec_cmd(char *cmd, ...) {
-  char *argv[10];
-  va_list arguments;
-  pid_t pid;
-  int i;
-
-  va_start(arguments, cmd);
-  for (i=0;i<9 && (argv[i] = va_arg(arguments, char *)) != NULL; i++);
-  argv[i] = NULL;
-  va_end(arguments);
-  pid = fork();
-  if (pid < 0) return -1;
-  if (pid > 0) {
-    wait(NULL);
-  } else {
-    execve(cmd, argv, environ);
-    //perror("execvp failed");
-    exit(0);
-  }
-  return 0;
 }
 
 #ifdef USE_MINIT

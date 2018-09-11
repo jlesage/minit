@@ -48,12 +48,12 @@ CFLAGS+=$(foreach fnord,$(libowfat_path),-I$(dir $(fnord)))
 LDFLAGS+=$(foreach fnord,$(libowfat_path),-L$(dir $(fnord)))
 endif
 
-minit: minit.o split.o openreadclose.o opendevconsole.o
+minit: minit.o split.o openreadclose.o opendevconsole.o execcmd.o
 msvc: msvc.o
 minit-update: minit-update.o split.o openreadclose.o
 serdo: serdo.o
 
-shutdown: shutdown.o split.o openreadclose.o opendevconsole.o
+shutdown: shutdown.o split.o openreadclose.o opendevconsole.o execcmd.o
 	$(DIET) $(CROSS)$(CC) $(LDFLAGS) -o shutdown $^ $(LDLIBS)
 
 %.o: %.c
