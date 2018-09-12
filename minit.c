@@ -22,11 +22,6 @@
 
 #include "minit.h"
 
-#define MALLOC_TEST
-#if !defined(__dietlibc__) && !defined(__GLIBC__)
-#undef MALLOC_TEST
-#endif
-
 #ifdef MALLOC_TEST
 extern void* __libc_malloc(size_t size);
 extern void* __libc_realloc(void* x,size_t size);
