@@ -301,6 +301,7 @@ again:
       for (i=3; i<1024; ++i) close(i);
     }
     execve(argv0,argv,environ);
+    log("execve to '",argv0,"' failed: ",strerror(errno),".");
     _exit(1);	
   default:
     fd=open("sync",O_RDONLY);
