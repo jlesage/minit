@@ -29,6 +29,10 @@ ifneq ($(HISTORY),)
 CFLAGS+=-DHISTORY=$(HISTORY)
 endif
 
+ifneq ($(MINIT_LOG_PREFIX),)
+CFLAGS+=-DMINIT_LOG_PREFIX='"$(MINIT_LOG_PREFIX)"'
+endif
+
 ifneq ($(DEBUG),)
 CFLAGS+=-g
 LDFLAGS+=-g

@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <alloca.h>
 #include <sys/reboot.h>
+#include <errmsg.h>
 #include "fmt.h"
 #include "str.h"
 
@@ -75,6 +76,12 @@ static void minitexit(int status);
 #ifdef UPDATE
 static int doupdate;
 #endif
+
+#ifndef MINIT_LOG_PREFIX
+#define MINIT_LOG_PREFIX ""
+#endif
+
+#define log(...) msg(MINIT_LOG_PREFIX __VA_ARGS__);
 
 static int i_am_init;
 
@@ -188,7 +195,7 @@ void handlekilled(pid_t killed, int status) {
 #endif
   if (killed == (pid_t)-1) {
     static int saidso;
-    if (!saidso) { write(2,"all services exited.\n",21); saidso=1; }
+    if (!saidso) { log("all services exited."); saidso=1; }
     if (i_am_init) minitexit(0);
   }
   if (killed==0) return;
@@ -397,11 +404,6 @@ static void minitexit(int status) {	/* exiting on an initialization failure is n
   _exit(status);
 }
 
-
-static void _puts(const char* s) {
-  write(1,s,str_len(s));
-}
-
 void childhandler() {
   int status;
   pid_t killed;
@@ -411,10 +413,8 @@ void childhandler() {
 #if 0
   if (getpid()!=1) {
     char buf[100];
-    _puts("childhandler() called from pid ");
     buf[fmt_ulong(buf,getpid())]=0;
-    _puts(buf);
-    _puts("\n");
+    log("childhandler() called from pid ", buf);
     return;
   }
 #endif
@@ -488,7 +488,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (infd<0 || outfd<0) {
-    _puts("minit: could not open " MINITROOT "/in or " MINITROOT "/out\n");
+    log("minit: could not open " MINITROOT "/in or " MINITROOT "/out\n");
     minitexit(1);
     nfds=0;
   } else
@@ -558,7 +558,7 @@ int main(int argc, char *argv[]) {
 #ifdef CONSOLE
       opendevconsole();
 #endif
-      _puts("poll failed!\n");
+      log("poll failed!\n");
       minitexit(1);
       /* what should we do if poll fails?! */
       break;
