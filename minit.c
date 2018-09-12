@@ -274,7 +274,7 @@ again:
       argv=(char**)alloca(2*sizeof(char*));
       argv[1]=0;
     }
-    argv0=(char*)alloca(PATH_MAX+1);
+    argv0=(char*)malloc(PATH_MAX+1);
     if (!argv || !argv0) _exit(1);
     if (readlink("run",argv0,PATH_MAX)<0) {
       if (errno!=EINVAL) _exit(1);	/* not a symbolic link */
