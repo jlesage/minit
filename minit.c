@@ -202,6 +202,9 @@ void handlekilled(pid_t killed, int status) {
   i=findbypid(killed);
 #if 0
   printf("%d exited, idx %d -> service %s\n",killed,i,i>=0?root[i].name:"[unknown]");
+#elif defined(LOG_SERVICE_STATE)
+  if (i>=0)
+    log("service ", root[i].name, " exited.");
 #endif
   if (i>=0) {
     char *argv0=(char*)alloca(PATH_MAX+1);
@@ -222,6 +225,8 @@ void handlekilled(pid_t killed, int status) {
     if (root[i].respawn) {
 #if 0
       printf("restarting %s\n",root[i].name);
+#elif defined(LOG_SERVICE_STATE)
+      log("restarting service ", root[i].name, ".");
 #endif
       circsweep();
       startservice(i,time(0)-root[i].startedat<1,root[i].father);
@@ -325,6 +330,9 @@ int startnodep(int service,int pause) {
   if (isup(service)) return 0;
   /* step 2: fork and exec service, put PID in data structure */
   if (chdir(MINITROOT) || chdir(root[service].name)) return -1;
+#ifdef LOG_SERVICE_STATE
+  log("starting service ", root[service].name, "...");
+#endif
   root[service].startedat=time(0);
   root[service].pid=forkandexec(pause,service);
   return root[service].pid;
@@ -388,6 +396,8 @@ int startservice(int service,int pause,int father) {
       snprintf(buf,10,"%d\n",pid);
       write(1,buf,str_len(buf));
     }
+#elif defined(LOG_SERVICE_STATE)
+    log("started service ", root[service].name, ".");
 #endif
     close(dir);
     dir=-1;
